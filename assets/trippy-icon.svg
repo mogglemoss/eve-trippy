@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="space" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#244653"/>
+      <stop offset="0.6" stop-color="#15303a"/>
+      <stop offset="1" stop-color="#0b1a21"/>
+    </radialGradient>
+    <linearGradient id="shell" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#f7a04a"/>
+      <stop offset="0.45" stop-color="#e8782a"/>
+      <stop offset="1" stop-color="#b8501a"/>
+    </linearGradient>
+    <linearGradient id="grime" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0.55" stop-color="#3a1d0c" stop-opacity="0"/>
+      <stop offset="1" stop-color="#3a1d0c" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="pod" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e9be5a"/>
+      <stop offset="0.5" stop-color="#d9a441"/>
+      <stop offset="1" stop-color="#a8762a"/>
+    </linearGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3d78b"/>
+      <stop offset="1" stop-color="#b98a35"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22201c"/>
+      <stop offset="1" stop-color="#0f0e0c"/>
+    </linearGradient>
+    <radialGradient id="phosphor" cx="45%" cy="40%" r="60%">
+      <stop offset="0" stop-color="#fff1c2"/>
+      <stop offset="0.4" stop-color="#ffc25a"/>
+      <stop offset="1" stop-color="#e07a1f"/>
+    </radialGradient>
+    <radialGradient id="amberGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffb347" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ffb347" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="beacon" cx="38%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#ffb3a0"/>
+      <stop offset="0.5" stop-color="#e2513a"/>
+      <stop offset="1" stop-color="#8f2a1a"/>
+    </radialGradient>
+    <pattern id="stripes" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
+      <rect width="18" height="18" fill="#efe1bd"/>
+      <rect width="9" height="18" fill="#d4432f"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="2" fill="#000" opacity="0.28"/>
+    </pattern>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12"/></filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="20"/></filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.16 0"/>
+    </filter>
+    <filter id="dirt" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.035" numOctaves="3" seed="3" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.12  0 0 0 0 0.04  0 0 0 0.45 -0.1"/>
+    </filter>
+    <clipPath id="shellClip"><path id="shellPath" d="M226 520 A286 258 0 0 1 798 520 L798 660 Q798 776 682 776 L342 776 Q226 776 226 660 Z"/></clipPath>
+    <clipPath id="screenClip"><rect x="302" y="404" width="420" height="232" rx="52"/></clipPath>
+  </defs>
+
+  <!-- space -->
+  <rect width="1024" height="1024" fill="url(#space)"/>
+  <!-- atomic sunburst -->
+  <g transform="translate(512 540)" fill="#f2e6c8" opacity="0.045">
+    <g id="ray"><path d="M0 0 L-46 -720 L46 -720 Z"/></g>
+    <use href="#ray" transform="rotate(30)"/><use href="#ray" transform="rotate(60)"/><use href="#ray" transform="rotate(90)"/>
+    <use href="#ray" transform="rotate(120)"/><use href="#ray" transform="rotate(150)"/><use href="#ray" transform="rotate(180)"/>
+    <use href="#ray" transform="rotate(210)"/><use href="#ray" transform="rotate(240)"/><use href="#ray" transform="rotate(270)"/>
+    <use href="#ray" transform="rotate(300)"/><use href="#ray" transform="rotate(330)"/>
+  </g>
+  <!-- badge rings -->
+  <circle cx="512" cy="540" r="404" fill="none" stroke="#d9a441" stroke-width="22" opacity="0.85"/>
+  <circle cx="512" cy="540" r="370" fill="none" stroke="#efe1bd" stroke-width="3" opacity="0.35" stroke-dasharray="14 10"/>
+  <circle cx="512" cy="540" r="436" fill="none" stroke="#efe1bd" stroke-width="2" opacity="0.18"/>
+  <!-- stars -->
+  <g fill="#f2e6c8">
+    <circle cx="120" cy="150" r="2.4" opacity="0.7"/><circle cx="900" cy="130" r="2" opacity="0.6"/>
+    <circle cx="70" cy="860" r="2" opacity="0.55"/><circle cx="950" cy="880" r="2.4" opacity="0.6"/>
+    <circle cx="330" cy="70" r="1.6" opacity="0.5"/><circle cx="700" cy="60" r="1.4" opacity="0.5"/>
+    <circle cx="60" cy="500" r="1.6" opacity="0.4"/><circle cx="970" cy="520" r="1.6" opacity="0.4"/>
+  </g>
+  <path d="M846 108 l4 12 12 4 -12 4 -4 12 -4 -12 -12 -4 12 -4z" fill="#f2e6c8" opacity="0.8"/>
+  <path d="M150 300 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z" fill="#f2e6c8" opacity="0.6"/>
+
+  <!-- drop shadow -->
+  <path d="M226 520 A286 258 0 0 1 798 520 L798 660 Q798 776 682 776 L342 776 Q226 776 226 660 Z" fill="#06121a" opacity="0.6" filter="url(#shadow)" transform="translate(6 30)"/>
+
+  <!-- antenna: candy-striped stem, red beacon -->
+  <rect x="498" y="170" width="28" height="110" rx="6" fill="url(#stripes)" stroke="#6b2a12" stroke-width="3"/>
+  <rect x="488" y="262" width="48" height="22" rx="6" fill="#a8762a" stroke="#5a3a10" stroke-width="3"/>
+  <circle cx="512" cy="150" r="72" fill="url(#amberGlow)" opacity="0.7"/>
+  <circle cx="512" cy="150" r="34" fill="url(#beacon)" stroke="#5a1c10" stroke-width="3"/>
+  <ellipse cx="499" cy="137" rx="10" ry="6" fill="#ffffff" opacity="0.7" transform="rotate(-30 499 137)"/>
+
+  <!-- ear pods: ribbed grille cylinders -->
+  <g>
+    <rect x="166" y="452" width="82" height="180" rx="22" fill="url(#pod)" stroke="#5a3a10" stroke-width="4"/>
+    <g fill="#3b2410" opacity="0.85">
+      <rect x="186" y="484" width="42" height="9" rx="4"/><rect x="186" y="508" width="42" height="9" rx="4"/>
+      <rect x="186" y="532" width="42" height="9" rx="4"/><rect x="186" y="556" width="42" height="9" rx="4"/>
+      <rect x="186" y="580" width="42" height="9" rx="4"/><rect x="186" y="604" width="42" height="9" rx="4"/>
+    </g>
+    <rect x="776" y="452" width="82" height="180" rx="22" fill="url(#pod)" stroke="#5a3a10" stroke-width="4"/>
+    <g fill="#3b2410" opacity="0.85">
+      <rect x="796" y="484" width="42" height="9" rx="4"/><rect x="796" y="508" width="42" height="9" rx="4"/>
+      <rect x="796" y="532" width="42" height="9" rx="4"/><rect x="796" y="556" width="42" height="9" rx="4"/>
+      <rect x="796" y="580" width="42" height="9" rx="4"/><rect x="796" y="604" width="42" height="9" rx="4"/>
+    </g>
+  </g>
+
+  <!-- neck -->
+  <rect x="440" y="760" width="144" height="96" rx="20" fill="#6f4a22" stroke="#3b2410" stroke-width="4"/>
+  <rect x="456" y="812" width="112" height="10" rx="5" fill="#3b2410" opacity="0.7"/>
+  <rect x="456" y="832" width="112" height="10" rx="5" fill="#3b2410" opacity="0.7"/>
+
+  <!-- shell -->
+  <use href="#shellPath" fill="url(#shell)"/>
+  <g clip-path="url(#shellClip)">
+    <!-- dome highlight -->
+    <ellipse cx="400" cy="330" rx="150" ry="52" fill="#ffd9a6" opacity="0.35" transform="rotate(-14 400 330)"/>
+    <!-- cream racing stripe with teal pinline -->
+    <rect x="200" y="346" width="640" height="30" fill="#efe1bd"/>
+    <rect x="200" y="376" width="640" height="5" fill="#1f5b66"/>
+    <!-- grime + dirt -->
+    <rect x="200" y="260" width="640" height="540" fill="url(#grime)"/>
+    <rect x="200" y="260" width="640" height="540" filter="url(#dirt)" opacity="0.5"/>
+    <!-- paint chips: cream undercoat with dark lip -->
+    <g fill="#e8d9b5" stroke="#5a2e10" stroke-width="2" stroke-linejoin="round">
+      <path d="M232 604 l18 -6 14 10 -4 16 -20 4 -10 -12z"/>
+      <path d="M766 700 l20 -10 12 8 -2 18 -22 6 -10 -10z"/>
+      <path d="M730 300 l16 -4 10 8 -6 12 -16 2 -6 -10z"/>
+      <path d="M300 690 l12 -4 8 6 -2 10 -14 2 -5 -8z"/>
+    </g>
+    <!-- scratches -->
+    <g stroke-linecap="round" fill="none">
+      <path d="M300 440 l70 -38" stroke="#ffe3bd" stroke-width="2" opacity="0.5"/>
+      <path d="M302 443 l70 -38" stroke="#6b2a12" stroke-width="1.5" opacity="0.45"/>
+      <path d="M690 690 l54 30" stroke="#ffe3bd" stroke-width="2" opacity="0.45"/>
+      <path d="M692 693 l54 30" stroke="#6b2a12" stroke-width="1.5" opacity="0.4"/>
+      <path d="M560 300 l44 -12" stroke="#ffe3bd" stroke-width="1.6" opacity="0.4"/>
+      <path d="M262 660 l26 44" stroke="#6b2a12" stroke-width="1.5" opacity="0.4"/>
+    </g>
+    <!-- rust streak under a rivet -->
+    <path d="M288 460 q6 40 2 90" stroke="#7a3a12" stroke-width="5" opacity="0.35" fill="none" stroke-linecap="round" filter="url(#soft)"/>
+  </g>
+  <!-- shell outline -->
+  <use href="#shellPath" fill="none" stroke="#5a2e10" stroke-width="5"/>
+  <!-- rivets -->
+  <g>
+    <g id="rivet"><circle r="9" fill="#a8762a" stroke="#4a2a0c" stroke-width="2"/><circle cx="-3" cy="-3" r="3" fill="#ffe3bd" opacity="0.8"/></g>
+    <use href="#rivet" x="284" y="442"/><use href="#rivet" x="740" y="442"/>
+    <use href="#rivet" x="284" y="600"/><use href="#rivet" x="740" y="600"/>
+    <use href="#rivet" x="360" y="730"/><use href="#rivet" x="664" y="730"/>
+    <use href="#rivet" x="512" y="742"/>
+  </g>
+
+  <!-- CRT visor: brass frame, smoked screen -->
+  <rect x="286" y="388" width="452" height="264" rx="66" fill="url(#frame)" stroke="#4a2a0c" stroke-width="5"/>
+  <rect x="302" y="404" width="420" height="232" rx="52" fill="url(#screen)" stroke="#2a1a08" stroke-width="4"/>
+  <g clip-path="url(#screenClip)">
+    <!-- warm screen ambience -->
+    <ellipse cx="512" cy="530" rx="220" ry="130" fill="url(#amberGlow)" opacity="0.35"/>
+    <!-- phosphor eyes -->
+    <circle cx="416" cy="506" r="96" fill="url(#amberGlow)"/>
+    <circle cx="608" cy="506" r="96" fill="url(#amberGlow)"/>
+    <rect x="356" y="450" width="120" height="110" rx="34" fill="url(#phosphor)"/>
+    <rect x="548" y="450" width="120" height="110" rx="34" fill="url(#phosphor)"/>
+    <rect x="396" y="486" width="44" height="46" rx="13" fill="#2b1a08" opacity="0.88"/>
+    <rect x="588" y="486" width="44" height="46" rx="13" fill="#2b1a08" opacity="0.88"/>
+    <rect x="404" y="494" width="12" height="12" rx="4" fill="#ffc25a" opacity="0.9"/>
+    <rect x="596" y="494" width="12" height="12" rx="4" fill="#ffc25a" opacity="0.9"/>
+    <rect x="370" y="462" width="26" height="12" rx="6" fill="#fff6dc" opacity="0.9"/>
+    <rect x="562" y="462" width="26" height="12" rx="6" fill="#fff6dc" opacity="0.9"/>
+    <!-- smile: glowing phosphor arc -->
+    <path d="M462 588 Q512 634 562 588" fill="none" stroke="#ffb347" stroke-width="30" stroke-linecap="round" opacity="0.28" filter="url(#soft)"/>
+    <path d="M462 588 Q512 634 562 588" fill="none" stroke="#ffc25a" stroke-width="12" stroke-linecap="round"/>
+    <path d="M462 588 Q512 634 562 588" fill="none" stroke="#fff1c2" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <!-- scanlines + curved-glass glare -->
+    <rect x="302" y="404" width="420" height="232" fill="url(#scan)"/>
+    <path d="M320 420 Q 470 400 700 470 L 700 430 Q 500 392 320 412 Z" fill="#ffffff" opacity="0.07"/>
+  </g>
+  <!-- frame screws -->
+  <g fill="#3b2410"><circle cx="312" cy="414" r="4"/><circle cx="712" cy="414" r="4"/><circle cx="312" cy="626" r="4"/><circle cx="712" cy="626" r="4"/></g>
+
+  <!-- stencil plate -->
+  <rect x="654" y="676" width="74" height="30" rx="4" fill="#efe1bd" opacity="0.9" stroke="#5a2e10" stroke-width="2"/>
+  <text x="691" y="698" font-family="Futura, 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="20" letter-spacing="3" text-anchor="middle" fill="#2b1a08">TR-01</text>
+
+  <!-- film grain over everything -->
+  <rect width="1024" height="1024" filter="url(#grain)" opacity="0.9"/>
+  <!-- vignette -->
+  <rect width="1024" height="1024" fill="url(#space)" opacity="0" />
+</svg>

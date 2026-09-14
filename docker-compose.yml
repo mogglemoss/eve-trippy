@@ -1,0 +1,19 @@
+services:
+  trippy:
+    build: .
+    image: trippy:latest
+    container_name: trippy
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    env_file: .env
+    environment:
+      STATE_FILE: /app/.trippy/state.json
+    volumes:
+      - trippy-state:/app/.trippy
+
+volumes:
+  trippy-state:
