@@ -13,6 +13,7 @@ import type { Kill } from '../kills/types.js';
 import type { Logger } from '../log.js';
 import { isKSpace, isRealSystemId, type Universe } from '../universe/index.js';
 import { buildKillEmbed, type KillContext } from './kills.js';
+import type { PrefsStore } from './prefs.js';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { defaultState, encodeState } from './routeUi.js';
 import type { ChainStore } from './store.js';
@@ -29,6 +30,8 @@ export interface KillWatchOptions {
   friendlyAlliances: Set<number>;
   /** 'jspace': only wormhole-space systems on the map; 'all': every mapped system. */
   scope: 'jspace' | 'all';
+  /** Per-server kill watches: systems announced regardless of map or space. */
+  prefs?: PrefsStore;
   /** The /alerts toggle: the feed keeps walking, nothing is posted while it says no. */
   enabled: () => boolean;
   cursorFile: string;
@@ -123,8 +126,11 @@ export class KillWatch {
     this.remember(kill);
     this.saveCursor();
     const chain = this.o.store.latest;
-    if (!isRealSystemId(kill.systemId) || !this.watched(chain).has(kill.systemId)) return;
-    if (!this.o.enabled()) return;
+    if (!isRealSystemId(kill.systemId)) return;
+    // Explicit /kills watches fire regardless of the map, the space, or the alert switch.
+    const watches = this.o.prefs?.killWatchesFor(kill.systemId) ?? [];
+    const onMap = this.watched(chain).has(kill.systemId) && this.o.enabled();
+    if (!onMap && !watches.length) return;
     if (this.recent.has(kill.id)) return;
     this.recent.add(kill.id);
     if (this.recent.size > 500) this.recent.delete(this.recent.values().next().value!);
@@ -140,11 +146,6 @@ export class KillWatch {
       avatarUrl: this.o.avatarUrl(),
     };
     const embed = await buildKillEmbed(kill, ctx);
-    const channel = await this.o.client.channels.fetch(this.o.channelId);
-    if (!channel?.isSendable()) {
-      this.o.log.warn(`kill channel ${this.o.channelId} is not a text channel I can send to`);
-      return;
-    }
     const home = this.o.homes[0];
     const components = home && home !== kill.systemId
       ? [new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -153,7 +154,26 @@ export class KillWatch {
         new ButtonBuilder().setCustomId(`sg|${kill.systemId}|new`).setLabel('Sigs').setEmoji('🛰️').setStyle(ButtonStyle.Secondary),
       )]
       : [new ActionRowBuilder<ButtonBuilder>().addComponents(new ButtonBuilder().setCustomId(`sg|${kill.systemId}|new`).setLabel('Sigs').setEmoji('🛰️').setStyle(ButtonStyle.Secondary))];
-    await channel.send({ embeds: [embed], components });
+
+    // Channel: once, whether it is on the map or somebody watches it; ping the watchers who asked for the channel.
+    const channelPings = [...new Set(watches.flatMap((w) => w.k.userIds))];
+    if (onMap || channelPings.length) {
+      const channel = await this.o.client.channels.fetch(this.o.channelId);
+      if (!channel?.isSendable()) {
+        this.o.log.warn(`kill channel ${this.o.channelId} is not a text channel I can send to`);
+      } else {
+        await channel.send({ ...(channelPings.length ? { content: channelPings.map((id) => `<@${id}>`).join(' ') } : {}), embeds: [embed], components });
+      }
+    }
+    // Direct messages to the watchers who asked for one. Buttons stay out of DMs; they need the server.
+    for (const id of [...new Set(watches.flatMap((w) => w.k.dmUserIds))]) {
+      try {
+        const user = await this.o.client.users.fetch(id);
+        await user.send({ embeds: [embed] });
+      } catch (e) {
+        this.o.log.warn(`could not DM kill to ${id}: ${(e as Error).message}`);
+      }
+    }
     this.announced += 1;
     this.lastAnnouncedAt = new Date();
     this.o.log.info(`kill ${kill.id} in ${this.o.universe.systems.get(kill.systemId)?.name ?? kill.systemId} announced (seq ${seq})`);

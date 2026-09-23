@@ -85,6 +85,12 @@ const wantedCommand = new SlashCommandBuilder().setName('wanted').setDescription
     .addBooleanOption((o) => o.setName('dm').setDescription('Tell me by direct message instead of in the channel').setRequired(false)))
   .addSubcommand((sc) => sc.setName('remove').setDescription('Stop waiting for a system').addStringOption((o) => o.setName('system').setDescription('System name or J-number').setRequired(true).setAutocomplete(true)))
   .addSubcommand((sc) => sc.setName('list').setDescription('Show the wanted list'));
+const killsCommand = new SlashCommandBuilder().setName('kills').setDescription('Hear about every kill in a system, on the map or not, k-space included (per server).')
+  .addSubcommand((sc) => sc.setName('watch').setDescription('Announce kills in this system')
+    .addStringOption((o) => o.setName('system').setDescription('System name or J-number').setRequired(true).setAutocomplete(true))
+    .addBooleanOption((o) => o.setName('dm').setDescription('Tell me by direct message instead of in the channel').setRequired(false)))
+  .addSubcommand((sc) => sc.setName('unwatch').setDescription('Stop announcing kills in a system').addStringOption((o) => o.setName('system').setDescription('System name or J-number').setRequired(true).setAutocomplete(true)))
+  .addSubcommand((sc) => sc.setName('list').setDescription('Show the systems being watched for kills'));
 const avoidCommand = new SlashCommandBuilder().setName('avoid').setDescription('Systems /route steers around (per server).')
   .addSubcommand((sc) => sc.setName('add').setDescription('Avoid a system').addStringOption((o) => o.setName('system').setDescription('System name').setRequired(true).setAutocomplete(true)))
   .addSubcommand((sc) => sc.setName('remove').setDescription('Stop avoiding a system').addStringOption((o) => o.setName('system').setDescription('System name').setRequired(true).setAutocomplete(true)))
@@ -103,7 +109,7 @@ for (const c of commands) {
   c.addBooleanOption((o) => o.setName('quiet').setDescription('Reply only to you').setRequired(false));
 }
 
-export const commandData = [...commands, avoidCommand, watchCommand, wantedCommand].map((c) => c.toJSON());
+export const commandData = [...commands, avoidCommand, watchCommand, wantedCommand, killsCommand].map((c) => c.toJSON());
 
 // ---------------------------------------------------------------------------
 
@@ -145,6 +151,7 @@ export async function handleCommand(i: ChatInputCommandInteraction, ctx: BotCont
       case 'unknown': return await panel(i, ctx, 'unknown');
       case 'watch': return await watch(i, ctx);
       case 'wanted': return await wanted(i, ctx);
+      case 'kills': return await kills(i, ctx);
       case 'alerts': return await alerts(i, ctx);
       default: throw new UserError(`Unknown command /${i.commandName}`);
     }
@@ -643,6 +650,32 @@ async function wanted(i: ChatInputCommandInteraction, ctx: BotContext): Promise<
   const items = ctx.prefs.get(guildId).wanted.map((w) =>
     `└ ${systemLabel(o, w.systemId)} · ${w.onMap ? '**on the map now**' : 'not on the map'} · for ${[...w.userIds.map((id) => `<@${id}>`), ...(w.dmUserIds ?? []).map((id) => `<@${id}> (DM)`)].join(', ')} · since ${ago(new Date(w.addedAt), new Date())}`);
   await reply(i, ctx, { title: '🎯 Wanted', colour: COLOUR.amber, lines: [headline, '', ...(items.length ? items : ['*Nothing yet. `/wanted add J101507` and Trippy will tell you when it shows up.*'])], chain });
+}
+
+async function kills(i: ChatInputCommandInteraction, ctx: BotContext): Promise<void> {
+  const guildId = i.guildId;
+  if (!guildId) throw new UserError('kill watches live per server; use this in a server.');
+  const sub = i.options.getSubcommand();
+  const o = opts(ctx);
+  let headline: string;
+  if (sub === 'watch') {
+    const s = resolveSystem(ctx, i.options.getString('system', true));
+    const dm = i.options.getBoolean('dm') ?? false;
+    const fresh = ctx.prefs.addKillWatch(guildId, s.id, i.user.id, dm);
+    const how = dm ? 'by direct message' : 'in the alert channel';
+    const feed = ctx.killWatch ? '' : ' (the kill feed is off on this Trippy, so nothing will arrive until it is switched on)';
+    headline = fresh
+      ? `Watching **${s.name}** for kills. Every kill zKillboard files there reaches you ${how}${feed}.`
+      : `**${s.name}** was already watched; added you to the people who hear about it (${how}).`;
+  } else if (sub === 'unwatch') {
+    const s = resolveSystem(ctx, i.options.getString('system', true));
+    headline = ctx.prefs.removeKillWatch(guildId, s.id) ? `No longer watching **${s.name}** for kills.` : `**${s.name}** was not being watched.`;
+  } else {
+    headline = 'Systems this server hears every kill in:';
+  }
+  const items = ctx.prefs.get(guildId).kills.map((k) =>
+    `└ ${systemLabel(o, k.systemId)} · for ${[...k.userIds.map((id) => `<@${id}>`), ...k.dmUserIds.map((id) => `<@${id}> (DM)`)].join(', ')} · since ${ago(new Date(k.addedAt), new Date())}`);
+  await reply(i, ctx, { title: '💥 Kill watches', colour: COLOUR.red, lines: [headline, '', ...(items.length ? items : ['*Nothing yet. `/kills watch Rens` and every kill there is announced, mapped or not.*'])] });
 }
 
 async function status(i: ChatInputCommandInteraction, ctx: BotContext): Promise<void> {

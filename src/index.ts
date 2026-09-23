@@ -135,7 +135,7 @@ client.once(Events.ClientReady, (ready) => {
     if (maskCorp) friendlyCorps.add(Number(maskCorp[1]));
     killWatch = new KillWatch({
       client, channelId: killChannel, store, universe, esi, homes,
-      tripwireUrl: config.tripwire.url, friendlyCorps, friendlyAlliances, scope: config.killAlerts,
+      tripwireUrl: config.tripwire.url, friendlyCorps, friendlyAlliances, scope: config.killAlerts, prefs,
       enabled: () => prefs.alertOn('kills'),
       cursorFile: join(dirname(config.stateFile), 'kills.json'), log,
       avatarUrl: () => ctx.avatarUrl,

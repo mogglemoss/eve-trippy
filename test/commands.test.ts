@@ -92,6 +92,20 @@ describe('every command answers within Discord limits', () => {
     expect(embed.description).toContain('J100001 [SIG-001] ~~> J100002 [SIG-003] ~~> Jita');
   });
 
+  it('/kills watch, list, unwatch keep a per-server list with DM flags', async () => {
+    const add = fakeInteraction({ kind: 'command', command: 'kills', sub: 'watch', strings: { system: 'Jita' }, bools: { dm: true } } as any);
+    await handleCommand(asCommand(add), ctx);
+    expect(JSON.stringify(lastSent(add))).toMatch(/Watching \*\*Jita\*\* for kills.*direct message/);
+    const list = fakeInteraction({ kind: 'command', command: 'kills', sub: 'list' } as any);
+    await handleCommand(asCommand(list), ctx);
+    expect(JSON.stringify(lastSent(list))).toMatch(/Jita.*\(DM\)/);
+    expect(ctx.prefs.killWatchesFor(30000142).length).toBe(1);
+    const rm = fakeInteraction({ kind: 'command', command: 'kills', sub: 'unwatch', strings: { system: 'Jita' } } as any);
+    await handleCommand(asCommand(rm), ctx);
+    expect(JSON.stringify(lastSent(rm))).toMatch(/No longer watching/);
+    expect(ctx.prefs.killWatchesFor(30000142).length).toBe(0);
+  });
+
   it('reports a missing system politely', async () => {
     const i = fakeInteraction({ kind: 'command', command: 'sigs', strings: { system: 'Nowhere' } });
     await handleCommand(asCommand(i), ctx);

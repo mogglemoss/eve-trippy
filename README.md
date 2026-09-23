@@ -115,6 +115,7 @@ Access can be gated to a role and a channel, because the map is corp intel.
 | `/avoid` | The avoid list as a panel: Add opens a form, a select removes, Clear all. Subcommands `add`, `remove`, `list`, `clear`. Per server. |
 | `/watch` | The watch list as a panel, same controls. Subcommands `add`, `remove`, `list`. Per server. |
 | `/wanted` | Systems people want to hear about the moment they connect: `add`, `remove`, `list`. Per server. |
+| `/kills` | Every kill in a chosen system, on the map or not, k-space included: `watch`, `unwatch`, `list`. Per server, with a `dm` option. |
 | `/alerts [kind] [state]` | Every kind of alert with its switch. Bare `/alerts` shows the panel; each button toggles that kind. `kind` with `state: on/off` sets one; `kind` alone flips it. Map-wide. |
 | `/status` | Health: which Tripwire, which mask, last poll, last error, the kill feed, which alert kinds are off. |
 
@@ -303,6 +304,13 @@ watches within three gates of Jita (default five); `add place: region:The
 Forge`, or just the region's name, watches the whole region. A new hole whose
 k-space end qualifies is announced with a 📍 line even when new-exit alerts are
 off.
+
+**`/kills`**: systems whose every kill you want to hear about, wherever they
+are. `watch system: Rens` posts each kill zKillboard files there to the alert
+channel and pings you; `watch system: Rens dm: true` sends it to you by direct
+message instead. It works for k-space and for systems that are not on the map,
+which the ordinary kill alert never covers, and it fires even when the kill
+alert switch is off.
 
 **`/wanted`**: systems you are waiting to see connected. `add system: J101507`
 puts you on the list for it; when a hole to it lands on the map, Trippy posts

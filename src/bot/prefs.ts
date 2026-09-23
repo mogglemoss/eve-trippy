@@ -24,6 +24,14 @@ export interface Wanted {
   onMap: boolean;
 }
 
+/** A system whose kills people want to hear about, on the map or not, k-space included. */
+export interface KillWatch {
+  systemId: number;
+  userIds: string[];
+  dmUserIds: string[];
+  addedAt: string;
+}
+
 export interface GuildPrefs {
   /** System IDs to route around (never applied to a route's endpoints). */
   avoid: number[];
@@ -31,6 +39,8 @@ export interface GuildPrefs {
   watches: Watch[];
   /** Systems people are waiting to see connected. */
   wanted: Wanted[];
+  /** Systems whose kills are announced regardless of map or space. */
+  kills: KillWatch[];
 }
 
 /** Every kind of alert Trippy can post, each switchable on its own. */
@@ -82,7 +92,7 @@ export class PrefsStore {
 
   get(guildId: string): GuildPrefs {
     const p = this.data.guilds[guildId];
-    return p ? { avoid: p.avoid ?? [], watches: p.watches ?? [], wanted: p.wanted ?? [] } : { avoid: [], watches: [], wanted: [] };
+    return p ? { avoid: p.avoid ?? [], watches: p.watches ?? [], wanted: p.wanted ?? [], kills: p.kills ?? [] } : { avoid: [], watches: [], wanted: [], kills: [] };
   }
 
   addAvoid(guildId: string, systemId: number): boolean {
@@ -160,6 +170,42 @@ export class PrefsStore {
     this.data.guilds[guildId] = { ...p, wanted };
     this.save();
     return true;
+  }
+
+  /** Adds a kill watch for a user; returns whether the system is new to the server's list. */
+  addKillWatch(guildId: string, systemId: number, userId: string, dm = false): boolean {
+    const p = this.get(guildId);
+    const existing = p.kills.find((k) => k.systemId === systemId);
+    const put = (k: KillWatch) => {
+      k.userIds = k.userIds.filter((id) => id !== userId);
+      k.dmUserIds = k.dmUserIds.filter((id) => id !== userId);
+      if (dm) k.dmUserIds.push(userId); else k.userIds.push(userId);
+    };
+    if (existing) {
+      put(existing);
+      this.data.guilds[guildId] = p;
+      this.save();
+      return false;
+    }
+    const k: KillWatch = { systemId, userIds: [], dmUserIds: [], addedAt: new Date().toISOString() };
+    put(k);
+    this.data.guilds[guildId] = { ...p, kills: [...p.kills, k] };
+    this.save();
+    return true;
+  }
+
+  removeKillWatch(guildId: string, systemId: number): boolean {
+    const p = this.get(guildId);
+    const kills = p.kills.filter((k) => k.systemId !== systemId);
+    if (kills.length === p.kills.length) return false;
+    this.data.guilds[guildId] = { ...p, kills };
+    this.save();
+    return true;
+  }
+
+  /** Every guild's kill watches for one system, for the feed. */
+  killWatchesFor(systemId: number): { guildId: string; k: KillWatch }[] {
+    return Object.entries(this.data.guilds).flatMap(([guildId, g]) => (g.kills ?? []).filter((k) => k.systemId === systemId).map((k) => ({ guildId, k })));
   }
 
   /** Every guild's wanted entries with their guild, for the alert path. */
